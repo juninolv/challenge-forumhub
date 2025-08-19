@@ -1,11 +1,15 @@
 package com.oracle.api.topic.controller;
 
+import com.oracle.api.common.config.SwaggerConfig;
 import com.oracle.api.topic.dto.TopicPublicDto;
 import com.oracle.api.topic.dto.TopicRegisterDto;
 import com.oracle.api.topic.dto.TopicUpdateDto;
 import com.oracle.api.topic.model.Topic;
 import com.oracle.api.topic.service.TopicService;
 import com.oracle.api.topic.util.mapper.TopicMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +29,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/topics")
+@Tag(name = "Topics")
 @AllArgsConstructor
 public class TopicController {
     private final TopicService service;
@@ -32,6 +37,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @PostMapping
+    @Operation(
+        summary = "Topic Create",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<TopicPublicDto> create(
         @RequestBody TopicRegisterDto body,
         @RequestHeader(name = "Authorization") String token
@@ -47,6 +56,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @GetMapping("/{id}")
+    @Operation(
+        summary = "Read Topic by ID",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<TopicPublicDto> readById(
         @PathVariable UUID id
     ){
@@ -60,6 +73,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @GetMapping("/course")
+    @Operation(
+        summary = "Search Topic by Couse Name",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<List<TopicPublicDto>> readByCourseName(
         @RequestParam("name") String name
     ) {
@@ -75,6 +92,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @GetMapping("/created")
+    @Operation(
+        summary = "Read Topics with Limits order by Created At",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<List<TopicPublicDto>> readFirstsByDate(
         @RequestParam(name = "limit", defaultValue = "10") int limit
     ) {
@@ -90,6 +111,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @GetMapping("/pages")
+    @Operation(
+        summary = "Read Topics with Pages",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<Page<TopicPublicDto>> readPageable(
         @PageableDefault(size = 15, sort = "title", direction = Sort.Direction.ASC) Pageable pageable
     ) {
@@ -104,6 +129,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @GetMapping
+    @Operation(
+        summary = "Read all Topics",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<List<TopicPublicDto>> readAll() {
         List<TopicPublicDto> response = service.readAll()
             .stream()
@@ -117,6 +146,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @PutMapping("/{id}")
+    @Operation(
+        summary = "Update Topic",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<TopicPublicDto> update(
         @PathVariable UUID id,
         @RequestBody TopicUpdateDto body
@@ -132,6 +165,10 @@ public class TopicController {
 
     @PreAuthorize("hasAuthority('BASE_USER')")
     @DeleteMapping("/{id}")
+    @Operation(
+        summary = "Delete Topic",
+        security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
+    )
     public ResponseEntity<Void> delete(
         @PathVariable UUID id
     ) {
