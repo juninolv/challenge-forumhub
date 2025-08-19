@@ -1,13 +1,11 @@
 package com.oracle.api.user.service;
 
 import com.oracle.api.security.service.JwtService;
-import com.oracle.api.user.dto.UserPublicDto;
 import com.oracle.api.user.dto.UserRegisterDto;
 import com.oracle.api.user.dto.UserTokenDto;
 import com.oracle.api.user.model.User;
 import com.oracle.api.user.repository.UserRepository;
 import com.oracle.api.user.util.exception.UserException;
-import com.oracle.api.user.util.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,25 +20,23 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository repository;
-    private final UserMapper mapper;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserPublicDto register(UserRegisterDto data) {
+    public User register(UserRegisterDto data) {
         User entity = new User(data);
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
 
-        return mapper.toPublic(repository.save(entity));
+        return repository.save(entity);
     }
 
     public UserTokenDto login(Authentication data) {
         return new UserTokenDto(jwtService.encode(data));
     }
 
-    public UserPublicDto readById(UUID id) {
+    public User readById(UUID id) {
         return repository
             .findById(id)
-            .map(mapper::toPublic)
             .orElseThrow(() -> new UserException("User not found"));
     }
 

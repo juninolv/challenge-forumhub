@@ -5,6 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JwtService {
     private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
     private final Long timeout;
 
     public String encode(@NonNull Authentication auth) {
@@ -27,6 +29,12 @@ public class JwtService {
         return jwtEncoder
             .encode(JwtEncoderParameters.from(claims))
             .getTokenValue();
+    }
+
+    public String decoder(String token) {
+        return jwtDecoder
+            .decode(token)
+            .getSubject();
     }
 
     private Set<String> authorities(

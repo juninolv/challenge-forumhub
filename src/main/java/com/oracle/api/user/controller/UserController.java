@@ -4,7 +4,9 @@ import com.oracle.api.common.config.SwaggerConfig;
 import com.oracle.api.user.dto.UserPublicDto;
 import com.oracle.api.user.dto.UserRegisterDto;
 import com.oracle.api.user.dto.UserTokenDto;
+import com.oracle.api.user.model.User;
 import com.oracle.api.user.service.UserService;
+import com.oracle.api.user.util.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,11 +30,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserController {
     private UserService service;
+    private final UserMapper mapper;
 
     @PostMapping("/auth/register")
     @Operation(summary = "User Register")
     public ResponseEntity<UserPublicDto> register(@Valid @RequestBody UserRegisterDto body) {
-        UserPublicDto response = service.register(body);
+        User entity = service.register(body);
+        UserPublicDto response = mapper.toPublic(entity);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -58,9 +62,12 @@ public class UserController {
         security = @SecurityRequirement(name = SwaggerConfig.BEARER_NAME)
     )
     public ResponseEntity<UserPublicDto> readById(@PathVariable UUID id) {
+        User entity = service.readById(id);
+        UserPublicDto response = mapper.toPublic(entity);
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(service.readById(id));
+            .body(response);
     }
 
     @NonNull

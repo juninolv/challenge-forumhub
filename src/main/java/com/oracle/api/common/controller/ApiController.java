@@ -3,10 +3,12 @@ package com.oracle.api.common.controller;
 import com.oracle.api.common.dto.MessagePublicDto;
 import com.oracle.api.common.dto.MessageValidationDto;
 import com.oracle.api.common.dto.ValidationContentDto;
+import com.oracle.api.topic.util.exception.TopicException;
 import com.oracle.api.user.util.exception.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,9 +48,27 @@ public class ApiController {
             .body(new MessageValidationDto(messages));
     }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<MessagePublicDto> handlerUsernameNotFoundException(
+        @NonNull UsernameNotFoundException exception
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new MessagePublicDto(exception.getMessage()));
+    }
+
     @ExceptionHandler(UserException.class)
     public ResponseEntity<MessagePublicDto> handlerUserException(
         @NonNull UserException exception
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new MessagePublicDto(exception.getMessage()));
+    }
+
+    @ExceptionHandler(TopicException.class)
+    public ResponseEntity<MessagePublicDto> handlerTopicException(
+        @NonNull TopicException exception
     ) {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
