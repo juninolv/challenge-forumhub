@@ -14,7 +14,6 @@
 - **Spring Boot**
 - **Spring Data JPA**
 - **MySQL**
-- **Gutendex API**
 
 ---
 
